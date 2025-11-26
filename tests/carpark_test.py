@@ -7,17 +7,13 @@ parent = str(cwd.parent)
 sys.path.append(parent + "/smartpark")
 
 #Change the line below to import your manager class
-from mocks import MockCarparkManager
+from carpark_manager import CarparkManager
 
 class TestConfigParsing(unittest.TestCase):
 
     def test_fresh_carpark(self):
-        # arrange
-        # act
-        carpark = MockCarparkManager()
-        # assert
+        carpark = CarparkManager(location = 'Test', total_space = 1000)
         self.assertEqual(1000,carpark.available_spaces)
 
-if __name__=="__main__":
-#    print("cwd: " + parent + "/smartpark")
+if __name__=="__carpark_main__":
     unittest.main()
