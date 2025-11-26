@@ -41,7 +41,7 @@ carpark.car_exit(temperature = 22.0)
 print('Avialable spaces:', carpark.available_spaces)
 print('Current time:' , carpark.current_time)
 
-if __name__ == '__carpark_main__':
+if __name__ == '__main__':
     carpark_main()
 
 
