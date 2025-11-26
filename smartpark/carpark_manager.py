@@ -1,5 +1,12 @@
+import logging
 from datetime import datetime as dt
 from smartpark.interfaces import CarparkSensorListener, CarparkDataProvider
+
+logging.basicConfig(
+    filename = 'carpark.log',
+    level = logging.INFO,
+    format =  '%(asctime)s%(levelname)s%(message)s'
+)
 
 class CarparkManager(CarparkSensorListener, CarparkDataProvider):
     """
@@ -23,12 +30,16 @@ def car_enter(self, temperature: float):
     """ calls when a car enter the car park"""
     self._cars_in_park += 1
     self._temperature = temperature
+    logging.info('Car has entered. Cars in park: %s, temp: %s',
+                 self._cars_in_park, self._temperature)
     
 def car_exit(self, temperature: float):
     """ calls when a car exit the carpark"""
     if self._cars_in_park > 0:
         self._cars_in_park -= 1 
     self._temperature = temperature
+    logging.info('Car has exited. Cars in park: %s, temp: %s',
+                 self._cars_in_park, self._temperature)
 
 # Implementing CarperkDataProvider 
 
@@ -46,4 +57,4 @@ def temperature(self) -> float:
 @property
 def current_time(self) -> str:
     """ Should show the current time as a string (allows to use of OCT/NOV/ DEC ect) in display"""
-    return datetime.now().strftime('%H:%M:%S')
+    return dt.now().strftime('%H:%M:%S')
