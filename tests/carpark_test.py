@@ -1,13 +1,13 @@
 import unittest
 import sys,os
 from pathlib import Path
+
 cwd = Path(os.path.dirname(__file__))
 parent = str(cwd.parent)
-
 sys.path.append(parent + "/smartpark")
 
 #Change the line below to import your manager class
-from carpark_manager import CarparkManager
+from smartpark.carpark_manager import CarparkManager
 
 class TestCarparkManager(unittest.TestCase):
     """ 
@@ -18,7 +18,7 @@ class TestCarparkManager(unittest.TestCase):
         This should test a fresh carpark having all avialable spaces.
         """
         manager = CarparkManager(location = 'Test Lot', total_space = 1000)
-        self.assertEqual(1000, manager.available_space)
+        self.assertEqual(1000, manager.available_spaces)
         
     def test_enter_exit_car(self):
         """
