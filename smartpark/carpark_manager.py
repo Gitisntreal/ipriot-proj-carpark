@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime as dt
-from smartpark.interfaces import CarparkSensorListener, CarparkDataProvider
+from interfaces import CarparkSensorListener, CarparkDataProvider
 
 logging.basicConfig(
     filename = 'carpark.log',
@@ -18,7 +18,7 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
 
     """
 
-    def __init__(self, location: str, total_space: int) -> None:
+    def __init__(self, location: str, total_spaces: int) -> None:
         """ Create a new carpark manager.
 
         Args:
@@ -27,7 +27,7 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         
     """
         self._location = location
-        self._total_space = total_space
+        self._total_spaces = int(total_spaces)
         self._temperature = 0.0
         self._cars_in_park = 0
         self._cars = set()
@@ -35,7 +35,7 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         logging.info(
             'CarparkManager created for "%s" with %s total space',
             self._location,
-            self._total_space,
+            self._total_spaces,
         )
 
     # Implementing CarparkSensorLinstener 
@@ -74,14 +74,14 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         Provides the temperature reading.
         """
         self._temperature = float(reading)
-        logging.info('Temperature updated: %.2f', self._temperature)
+        logging.info('Temperature updated: %.2f°C', self._temperature)
 
 # Implementing CarperkDataProvider 
 
     @property
     def available_spaces(self) -> int:
         """ should show the amount of space left (if it in negative something is wrong)."""
-        space_available = self._total_space - self._cars_in_park
+        space_available = self._total_spaces - self._cars_in_park
         return max(space_available, 0)
 
     @property
