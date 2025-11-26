@@ -6,7 +6,7 @@ parent = str(cwd.parent)
 
 sys.path.append(parent + "/smartpark")
 
-import configparser as pc
+from smartpark.config_parser import parse_config
 
 class TestConfigParsing(unittest.TestCase):
 
@@ -15,7 +15,7 @@ class TestConfigParsing(unittest.TestCase):
         The config "should" now provide location and total spaces. 
         """
         config_path = os.path.join(parent, 'samples_and_snippets', 'config.json')
-        parking_lot = pc.parse_cofig(config_path)
+        parking_lot = parse_config(config_path)
         
         self.assertEqual(parking_lot['location'], 'moondalup')
         self.assertEqual(parking_lot['total-spaces'], 130)
