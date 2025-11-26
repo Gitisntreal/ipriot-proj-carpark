@@ -1,9 +1,6 @@
-from smartpark.config_parser import parse_config 
-from smartpark.carpark_manager import CarparkManager 
-from interfaces import CarparkSensorListener
-from interfaces import CarparkDataProvider
-from smartpark.no_pi import run_gui
-import time
+from config_parser import parse_config
+from carpark_manager import CarparkManager 
+
 
 '''
     TODO: 
@@ -25,48 +22,19 @@ import time
         * The current temperature
     
 '''
-def main():
+def main() -> None:
+    """A way to open the park management system"""
     config = parse_config('samples_and_snippets/config.json')
     location = config['location']
-    total_space = config['number_of_space']
-
-manager = CarparkManager(location  = location, total_space = total_spaces)
-run_gui(manager)
+    total_spaces = config['total-spaces']
+    manager = CarparkManager(location= location, total_spaces = total_spaces)
+    
+    print(f"Carpark: {location} ({total_spaces} spaces total)")
+    print(f"Available spaces: {manager.available_spaces}")
+    print(f"Current temperature: {manager.temperature}°C")
+    print(f"Time: {manager.current_time}")
     
 
 if __name__ == '__main__':
     main()
 
-
-class MockCarparkManager(CarparkSensorListener,CarparkDataProvider):
-    #constant, for where to get the configuration data
-    CONFIG_FILE = "carpark_config.txt"
-
-    def __init__(self):
-#        configuration = parse_config(MockCarparkManager.CONFIG_FILE)
-        pass
-
-    @property
-    def available_spaces(self):
-        return 1000
-
-    @property
-    def temperature(self):
-        return 1000
-
-    @property
-    def current_time(self):
-        return time.localtime()
-
-    def incoming_car(self,license_plate):
-        print('Car in! ' + license_plate)
-
-    def outgoing_car(self,license_plate):
-        print('Car out! ' + license_plate)
-
-    def temperature_reading(self,reading):
-        print(f'temperature is {reading}')
-
-class Car:
-    def __init__(self,plate=None):
-        self.LicensePlate = plate
