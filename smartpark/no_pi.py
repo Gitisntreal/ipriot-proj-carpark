@@ -98,7 +98,7 @@ class CarParkDisplay:
         field_values = dict(zip(CarParkDisplay.fields, [
             f'{self._provider.available_spaces:03d}',
             f'{self._provider.temperature:02d}℃',
-            time.strftime("%H:%M:%S",self._provider.current_time)
+            self._provider.current_time
         ]))
         self.window.update(field_values)
 
@@ -119,19 +119,19 @@ class CarDetectorWindow:
         self.root=root
         self.root.title("Car Detector ULTRA")
 
-        self.btn_incoming_car = tk.Button(
-            self.root, text='🚘 Incoming Car', font=('Arial', 50), cursor='right_side', command=self.incoming_car)
-        self.btn_incoming_car.grid(padx=10, pady=5,row=0,columnspan=2)
-        self.btn_outgoing_car = tk.Button(
-            self.root, text='Outgoing Car 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.outgoing_car)
-        self.btn_outgoing_car.grid(padx=10, pady=5,row=1,columnspan=2)
+        self.btn_car_enter = tk.Button(
+            self.root, text='🚘 Car entering', font=('Arial', 50), cursor='right_side', command=self.car_enter)
+        self.btn_car_enter.grid(padx=10, pady=5,row=0,columnspan=2)
+        self.btn_car_exit = tk.Button(
+            self.root, text='Car exiting 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.car_exit)
+        self.btn_car_exit.grid(padx=10, pady=5,row=1,columnspan=2)
         self.listeners=list()
         self.temp_label=tk.Label(
             self.root, text="Temperature", font=('Arial', 20)
         )
         self.temp_label.grid(padx=10, pady=5,column=0,row=2)
         self.temp_var=tk.StringVar()
-        self.temp_var.trace_add("write",lambda x,y,v: self.temperature_changed(float(self.temp_var.get())))
+        self.temp_var.trace_add("write",lambda x,y,v: self.temperature(float(self.temp_var.get())))
         self.temp_box=tk.Entry(
             self.root,font=('Arial', 20),textvariable=self.temp_var
         )
@@ -155,33 +155,34 @@ class CarDetectorWindow:
         if isinstance(listener,CarparkSensorListener):
             self.listeners.append(listener)
 
-    def incoming_car(self):
+    def car_enter(self):
 #        print("Car goes in")
         for listener in self.listeners:
-            listener.incoming_car(self.current_license)
+            listener.car_enter(self.current_license)
 
-    def outgoing_car(self):
+    def car_exit(self):
 #        print("Car goes out")
         for listener in self.listeners:
-            listener.outgoing_car(self.current_license)
+            listener.car_exit(self.current_license)
 
-    def temperature_changed(self,temp):
+    def temperature(self,temp):
         for listener in self.listeners:
-            listener.temperature_reading(temp)
+            listener.temperature(temp)
 
 
 if __name__ == '__main__':
+    from smartpark.config_parser import parse_config
+    from smartpark.carpark_manager import CarparkManager
     root = tk.Tk()
-
-    #TODO: This is my dodgy mockup. Replace it with a good one!
-    carpark_main = carpark_main.CarparkManager()
+    cfg = parse_config('sample_and_snippets/conifg.json')
+    manager = carpark_main.CarparkManager(
+        location = cfg['location']
+        total_spaces = cfg['total-spaces'])
 
     display=CarParkDisplay(root)
-    #TODO: Set the display to use your data source
-    display.data_provider = carpark_main 
+    display.data_provider = manager 
 
     detector = CarDetectorWindow(root)
-    #TODO: Attach your event listener
-    detector.add_listener(carpark_main )
+    detector.add_listener(manager )
 
     root.mainloop()
