@@ -1,3 +1,5 @@
+from smartpark.config_parser import parse_config 
+from smartpark.carpark_manager import CarparkManager 
 from interfaces import CarparkSensorListener
 from interfaces import CarparkDataProvider
 from config_parser import parse_config
@@ -23,6 +25,27 @@ import time
         * The current temperature
     
 '''
+def carpark_main():
+    config = parse_config('samples_and_snippets/config.json')
+    location = config['location']
+    total_space = config['number_of_space']
+    carpark = CarparkManager(location = location, total_space = total_space)
+    
+# Testing
+print(f'carpark at {location} with {total_space} spaces')
+
+carpark.car_enter(temperature = 22.5)
+print('Avialable spaces:', carpark.available_spaces)
+carpark.car_enter(temperature = 23.0)
+print('Avialable spaces:', carpark.available_spaces)
+carpark.car_exit(temperature = 22.0)
+print('Avialable spaces:', carpark.available_spaces)
+print('Current time:' , carpark.current_time)
+
+if __name__ == '__carpark_main__':
+    carpark_main()
+
+
 class MockCarparkManager(CarparkSensorListener,CarparkDataProvider):
     #constant, for where to get the configuration data
     CONFIG_FILE = "carpark_config.txt"
