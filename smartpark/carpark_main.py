@@ -33,7 +33,6 @@ def carpark_main():
     
 # Testing
 print(f'carpark at {location} with {total_space} spaces')
-
 carpark.car_enter(temperature = 22.5)
 print('Avialable spaces:', carpark.available_spaces)
 carpark.car_enter(temperature = 23.0)
