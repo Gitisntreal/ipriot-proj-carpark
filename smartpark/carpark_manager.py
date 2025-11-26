@@ -30,11 +30,11 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         self._total_space = total_space
         self._temperature = 0.0
         self._cars_in_park = 0
+        self._cars = set()
 
-    
         logging.info(
             'CarparkManager created for "%s" with %s total space',
-            self.location,
+            self._location,
             self._total_space,
         )
 
