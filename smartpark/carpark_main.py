@@ -7,7 +7,7 @@ import time
 
 '''
     TODO: 
-    - make your own module, or rename this one. Yours won't be a mock-up, so "mocks" is a bad name here.
+    - make your own module, or rename this one. Yours won't be a mock-up, so "mocks" is a bad name here. 
     - Read your configuration from a file. 
     - Write entries to a log file when something happens.
     - The "display" should update instantly when something happens
