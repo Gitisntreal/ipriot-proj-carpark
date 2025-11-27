@@ -171,8 +171,8 @@ class CarDetectorWindow:
 
 
 if __name__ == '__main__':
-    from smartpark.config_parser import parse_config
-    from smartpark.carpark_manager import CarparkManager
+    from config_parser import parse_config
+    from carpark_manager import CarparkManager
     root = tk.Tk()
     cfg = parse_config('sample_and_snippets/conifg.json')
     manager = carpark_main.CarparkManager(
