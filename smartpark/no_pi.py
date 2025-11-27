@@ -9,7 +9,6 @@ import threading
 import time
 import tkinter as tk
 from typing import Iterable
-#TODO: replace this module with yours
 import carpark_main
 
 # ------------------------------------------------------------------------------------#
