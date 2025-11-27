@@ -174,7 +174,7 @@ if __name__ == '__main__':
     from config_parser import parse_config
     from carpark_manager import CarparkManager
     root = tk.Tk()
-    cfg = parse_config('sample_and_snippets/conifg.json')
+    cfg = parse_config('samples_and_snippets/config.json')
     manager = carpark_main.CarparkManager(
         location = cfg['location'],
         total_spaces = cfg['total-spaces'])

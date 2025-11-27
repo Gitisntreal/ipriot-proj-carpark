@@ -17,14 +17,14 @@ class TestCarparkManager(unittest.TestCase):
         """
         This should test a fresh carpark having all avialable spaces.
         """
-        manager = CarparkManager(location = 'Test Lot', total_space = 1000)
+        manager = CarparkManager(location = 'Test Lot', total_spaces = 1000)
         self.assertEqual(1000, manager.available_spaces)
         
     def test_enter_exit_car(self):
         """
         This should test entering and exiting cars in which should adjust available spaces correctly.
         """
-        manager = CarparkManager(location = 'Test Lot', total_space = 10)
+        manager = CarparkManager(location = 'Test Lot', total_spaces = 10)
        
         manager.car_enter('TJN-449')
         self.assertEqual(9, manager.available_spaces)
