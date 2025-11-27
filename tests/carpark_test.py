@@ -4,7 +4,7 @@ from pathlib import Path
 
 cwd = Path(os.path.dirname(__file__))
 parent = str(cwd.parent)
-sys.path.append(parent + "/smartpark")
+sys.path.append(parent)
 
 #Change the line below to import your manager class
 from smartpark.carpark_manager import CarparkManager
