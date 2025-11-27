@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime as dt
-# from interfaces import CarparkSensorListener, CarparkDataProvider
-from smartpark.interfaces import CarparkSensorListener, CarparkDataProvider
+from interfaces import CarparkSensorListener, CarparkDataProvider
+#from smartpark.interfaces import CarparkSensorListener, CarparkDataProvider
 
 logging.basicConfig(
     filename = 'carpark.log',
