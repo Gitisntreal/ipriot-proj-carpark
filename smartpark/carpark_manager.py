@@ -69,7 +69,7 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
             self._cars_in_park,
         )
     
-    def temperature(self, reading: float) -> None:
+    def set_temperature(self, reading: float) -> None:
         """
         Provides the temperature reading.
         """
