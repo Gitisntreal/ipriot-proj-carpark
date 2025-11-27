@@ -5,11 +5,13 @@ You need to split the classes here into two files, one for the CarParkDisplay an
 Attend to the TODOs in each class to complete the implementation."""
 from interfaces import CarparkSensorListener
 from interfaces import CarparkDataProvider
+from config_parser import  parse_config
+from carpark_manager import CarparkManager
 import threading
 import time
 import tkinter as tk
 from typing import Iterable
-import carpark_main
+
 
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class.                           #
@@ -96,7 +98,7 @@ class CarParkDisplay:
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
             f'{self._provider.available_spaces:03d}',
-            f'{self._provider.temperature:02d}℃',
+            f'{int(self._provider.temperature):02d}℃',
             self._provider.current_time
         ]))
         self.window.update(field_values)
@@ -174,7 +176,7 @@ if __name__ == '__main__':
     from carpark_manager import CarparkManager
     root = tk.Tk()
     cfg = parse_config('samples_and_snippets/config.json')
-    manager = carpark_main.CarparkManager(
+    manager = CarparkManager(
         location = cfg['location'],
         total_spaces = cfg['total-spaces'])
 
@@ -182,6 +184,6 @@ if __name__ == '__main__':
     display.data_provider = manager 
 
     detector = CarDetectorWindow(root)
-    detector.add_listener(manager )
+    detector.add_listener(manager)
 
     root.mainloop()
