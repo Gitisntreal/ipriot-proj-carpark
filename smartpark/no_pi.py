@@ -96,7 +96,7 @@ class CarParkDisplay:
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
             f'{self._provider.available_spaces:03d}',
-            f'{int(self._provider.temperature):02d}℃',
+            f'{self._provider.temperature:04.1f}℃',
             self._provider.current_time
         ]))
         self.window.update(field_values)
@@ -128,7 +128,17 @@ class CarDetectorWindow:
         )
         self.temp_label.grid(padx=10, pady=5,column=0,row=2)
         self.temp_var=tk.StringVar()
-        self.temp_var.trace_add("write",lambda x,y,v: self.temperature(float(self.temp_var.get())))
+        def temp_change(*_):
+            text = self.temp_var.get()
+            if not text:
+                return
+            try:
+                temp = float(text)
+            except ValueError:
+                return
+            self.temperature(temp)
+        self.temp_var.trace_add('write', temp_change)
+            
         self.temp_box=tk.Entry(
             self.root,font=('Arial', 20),textvariable=self.temp_var
         )
@@ -166,9 +176,10 @@ class CarDetectorWindow:
         if self.display is not None and self.display.data_provider is not None:
             self.display.update_display()
 
-    def temperature(self,temp):
+    def temperature(self, temp):
         for listener in self.listeners:
-            listener.temperature(temp)
+            if hasattr(listener,'set_temperature'):
+                listener.set_temperature(temp)
         if self.display is not None and self.display.data_provider is not None:
             self.display.update_display()
 
