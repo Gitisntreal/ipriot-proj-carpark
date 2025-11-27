@@ -81,11 +81,9 @@ class CarParkDisplay:
     def __init__(self,root):
         self.window = WindowedDisplay(root,
             'Moondalup', CarParkDisplay.fields)
-        updater = threading.Thread(target=self.check_updates)
-        updater.daemon = True
-        updater.start()
+        self._provider = None
+        self.check_updates()
         self.window.show()
-        self._provider=None
     
     @property
     def data_provider(self):
@@ -93,7 +91,7 @@ class CarParkDisplay:
     @data_provider.setter
     def data_provider(self,provider):
         if isinstance(provider,CarparkDataProvider):
-            self._provider=provider
+            self._provider = provider
 
     def update_display(self):
         field_values = dict(zip(CarParkDisplay.fields, [
@@ -104,29 +102,27 @@ class CarParkDisplay:
         self.window.update(field_values)
 
     def check_updates(self):
-        while True:
-            # TODO: This timer is pretty janky! Can you provide some kind of signal from your code
-            # to update the display?
-            time.sleep(1)
-            # When you get an update, refresh the display.
-            if self._provider is not None:
-                self.update_display()
+        if self._provider is not None:
+            self.update_display()
+        self.window.window.after(1000, self.check_updates)
 
 
 class CarDetectorWindow:
     """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
 
-    def __init__(self,root):
+    def __init__(self,root, display = None):
         self.root=root
-        self.root.title("Car Detector ULTRA")
+        self.root.title("Car Detector Budget Version")
 
+        self.display = display 
+        
         self.btn_car_enter = tk.Button(
             self.root, text='🚘 Car entering', font=('Arial', 50), cursor='right_side', command=self.car_enter)
         self.btn_car_enter.grid(padx=10, pady=5,row=0,columnspan=2)
         self.btn_car_exit = tk.Button(
             self.root, text='Car exiting 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.car_exit)
         self.btn_car_exit.grid(padx=10, pady=5,row=1,columnspan=2)
-        self.listeners=list()
+        self.listeners= []
         self.temp_label=tk.Label(
             self.root, text="Temperature", font=('Arial', 20)
         )
@@ -160,15 +156,21 @@ class CarDetectorWindow:
 #        print("Car goes in")
         for listener in self.listeners:
             listener.car_enter(self.current_license)
+        if self.display is not None and self.display.data_provider is not None:
+            self.display.update_display()
 
     def car_exit(self):
 #        print("Car goes out")
         for listener in self.listeners:
             listener.car_exit(self.current_license)
+        if self.display is not None and self.display.data_provider is not None:
+            self.display.update_display()
 
     def temperature(self,temp):
         for listener in self.listeners:
             listener.temperature(temp)
+        if self.display is not None and self.display.data_provider is not None:
+            self.display.update_display()
 
 
 if __name__ == '__main__':
@@ -183,7 +185,7 @@ if __name__ == '__main__':
     display=CarParkDisplay(root)
     display.data_provider = manager 
 
-    detector = CarDetectorWindow(root)
+    detector = CarDetectorWindow(root, display = display)
     detector.add_listener(manager)
 
     root.mainloop()
