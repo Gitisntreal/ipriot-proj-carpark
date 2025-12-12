@@ -141,4 +141,4 @@ class Car:
         """A hash code identifies an object for use in sets and dictionaries.
         Delegete the hash code to the license plate string."""
         return hash(self.lp)
-    # To do  1. License Plate (Must hold the info - done????) 2. entry/exit time () 3. make/model ( as a place holder SO DONT GET CARRIED AWAY)
+    # To do  1. License Plate (Must hold the info - done ) 2. entry/exit time (done - should detect duplicates now when entering the lp among other things) 3. make/model ( as a place holder)
