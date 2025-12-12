@@ -23,7 +23,7 @@ class TestCarparkManagerInterface(unittest.TestCase):
         """
         print('\n[Test] CarparkManager')
         print(f'Object type: {type(self.manager)}')
-        print('Expexted results: CarparkDataProvider and CarparkSensorListener')
+        print('Expexted results: CarparkDataProvider and CarparkSensorListener = True')
         
         actual_provider = isinstance(self.manager, CarparkDataProvider)
         actual_listener = isinstance(self.manager, CarparkSensorListener)

@@ -45,30 +45,31 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         """
         Senses and signals when a car has parked.
         """
-        self._cars_in_park += 1
+        car = Car(liscense_plate)
         if liscense_plate:
-            self._cars.add(liscense_plate)
+            self._cars_in_park += 1
+            self._cars.add(car)
         
-        logging.info(
-            'Car entering: %s | cars in park: %s',
-            liscense_plate,
-            self._cars_in_park,
-        )
+            logging.info(
+                'Car entering: %s | cars in park: %s',
+                liscense_plate,
+                self._cars_in_park,
+            )
     
     def car_exit(self, liscense_plate: str) -> None:
         """
         Senses and signals when a car has left the space.
         """
-        if self._cars_in_park > 0:
-            self._cars_in_park -= 1 
-        if liscense_plate and liscense_plate in self._cars:
+        car = Car(liscense_plate)
+        if liscense_plate and car in self._cars:
             self._cars.remove(liscense_plate)
+            self._cars_in_park -= 1 
         
-        logging.info(
-            'Car exiting: %s | cars in park: %s',
-            liscense_plate,
-            self._cars_in_park,
-        )
+            logging.info(
+                'Car exiting: %s | cars in park: %s',
+                liscense_plate,
+                self._cars_in_park,
+            )
     
     def set_temperature(self, reading: float) -> None:
         """
@@ -94,3 +95,20 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
     def current_time(self) -> str:
         """ Should show the current time as HH:MM:SS in display"""
         return dt.now().strftime('%H:%M:%S')
+
+class Car:
+    """ Represents a car by its license plate. """
+    def __init__(self,lp):
+        self.lp=lp
+    def __eq__(self, value):
+        """Equality test for comparing cars by their license plates."""
+        if type(value) == str:
+            return self.lp == value
+        elif type(value) == Car:
+            return self.lp == value.lp
+        else:
+            return value is self
+    def __hash__(self):
+        """A hash code identifies an object for use in sets and dictionaries.
+        Delegete the hash code to the license plate string."""
+        return hash(self.lp)
