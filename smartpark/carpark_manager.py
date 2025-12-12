@@ -41,35 +41,58 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
 
     # Implementing CarparkSensorLinstener 
 
-    def car_enter(self, liscense_plate: str) -> None:
+    def car_enter(self, lp: str) -> None:
         """
         Senses and signals when a car has parked.
         """
-        car = Car(liscense_plate)
-        if liscense_plate:
-            self._cars_in_park += 1
-            self._cars.add(car)
+        if not lp:
+            return
         
-            logging.info(
-                'Car entering: %s | cars in park: %s',
-                liscense_plate,
-                self._cars_in_park,
-            )
+        if lp in self._cars:
+            logging.warning('Duplicate Entry Ignored: %s', lp)
+            return
+        
+        if self._cars_in_park >= self._total_spaces:
+            logging.warning('Carpark Is Full: Entry Is Denied: %2', lp)
+            return
     
-    def car_exit(self, liscense_plate: str) -> None:
+        car = Car(lp)
+        car.entry_time = dt.now()
+        car.exit_time = None
+        
+        self._cars.add(car)
+        self._cars_in_park += 1 
+        
+        logging.info(
+            'Car Entering: %s | Cars In Park: %s',
+            lp,
+            self._cars_in_park 
+        )
+
+    
+    def car_exit(self, lp: str) -> None:
         """
         Senses and signals when a car has left the space.
         """
-        car = Car(liscense_plate)
-        if liscense_plate and car in self._cars:
-            self._cars.remove(liscense_plate)
-            self._cars_in_park -= 1 
+        if not lp:
+            return
         
-            logging.info(
-                'Car exiting: %s | cars in park: %s',
-                liscense_plate,
-                self._cars_in_park,
-            )
+        if lp not in self._cars:
+            logging.warning('Exit Ignored (Not Found): %s', lp)
+            return
+        
+        car_object = next(c for c in self._cars if c == lp)
+        car_object.exit_time = dt.now()
+        
+        self._cars.remove(car_object)
+        self._cars_in_park -= 1 
+        
+        logging.info(
+            'Car Exiting: %s | Cars In Park: %s',
+            lp,
+            self._cars_in_park 
+        )
+
     
     def set_temperature(self, reading: float) -> None:
         """
@@ -97,9 +120,14 @@ class CarparkManager(CarparkSensorListener, CarparkDataProvider):
         return dt.now().strftime('%H:%M:%S')
 
 class Car:
-    """ Represents a car by its license plate. """
-    def __init__(self,lp):
-        self.lp=lp
+    """ Represents a car by its license plate, entry/exit time, make/model. """
+    def __init__(self,lp: str, make: str = '', model: str = '' ):
+        self.lp = lp
+        self.make = make 
+        self.model = model
+        self.entry_time = None 
+        self.exit_time = None
+    
     def __eq__(self, value):
         """Equality test for comparing cars by their license plates."""
         if type(value) == str:
@@ -108,7 +136,9 @@ class Car:
             return self.lp == value.lp
         else:
             return value is self
+        
     def __hash__(self):
         """A hash code identifies an object for use in sets and dictionaries.
         Delegete the hash code to the license plate string."""
         return hash(self.lp)
+    # To do  1. License Plate (Must hold the info - done????) 2. entry/exit time () 3. make/model ( as a place holder SO DONT GET CARRIED AWAY)
